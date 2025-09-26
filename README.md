@@ -1,5 +1,7 @@
 # NOTICE: Playtester reported false antivirus trigger. It is not a virus.
 
+https://www.youtube.com/watch?v=irY6PpxQKN4 Disable Defender
+
 I work on this in my free time. Don't expect this to be good.
 
 You can launch the compiled version with -console to show the console. 
