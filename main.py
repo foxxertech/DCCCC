@@ -21,6 +21,7 @@ import turtle
 wn = turtle.Screen()
 wn.title("Dreamy Choc Chip Cookie Clicker")
 wn.bgcolor("black")
+turtle.screensize(800, 800)
 
 # use resource_path for gifs
 wn.register_shape(resource_path("woolies.gif"))
@@ -51,6 +52,13 @@ desc_pen.hideturtle()
 desc_pen.color("yellow")
 desc_pen.penup()
 desc_pen.goto(320, 80)
+# Do NOT write the description here by default
+
+# Add a separate pen for error messages
+error_pen = turtle.Turtle()
+error_pen.hideturtle()
+error_pen.color("red")
+error_pen.penup()
 
 def clicked(x, y):
     global clicks
@@ -62,16 +70,34 @@ def clicked(x, y):
     pen.write(f"Clicks: {clicks}", align="center", font=("Courier New", 32, "normal"))
     print(clicks)
 
-def upgrade1_clicked(x, y):
-    global tierOne
-    tierOne = True
-
 def show_description():
     desc_pen.clear()
-    desc_pen.write("Doubles Cookies per tap", align="center", font=("Courier New", 18, "normal"))
+    desc_pen.goto(435, 80)
+    desc_pen.write("Doubles Cookies per tap, costs 10 clicks", align="center", font=("Courier New", 18, "normal"))
 
 def hide_description():
     desc_pen.clear()
+
+def show_not_enough_clicks():
+
+    error_pen.clear()
+    error_pen.goto(0, -280)  # Position under the cookie
+    error_pen.write("Not enough clicks!", align="center", font=("Courier New", 18, "normal"))
+    wn.ontimer(hide_not_enough_clicks, 2000)
+    print("not enough")
+
+def hide_not_enough_clicks():
+    error_pen.clear()
+
+def upgrade1_clicked(x, y):
+    global tierOne, clicks
+    if not tierOne and clicks >= 10:
+        tierOne = True
+        clicks -= 10
+        pen.clear()
+        pen.write(f"Clicks: {clicks}", align="center", font=("Courier New", 32, "normal"))
+    elif not tierOne:
+        show_not_enough_clicks()
 
 def check_hover(x, y):
     if abs(x - 300) < 50 and abs(y - 0) < 50:
@@ -83,15 +109,15 @@ def poll_mouse():
     x, y = wn._root.winfo_pointerx() - wn._root.winfo_rootx(), wn._root.winfo_pointery() - wn._root.winfo_rooty()
     tx = x - wn.window_width() // 2
     ty = wn.window_height() // 2 - y
+    # Show description only when hovering over woolies
     if abs(tx - 300) < 50 and abs(ty - 0) < 50:
         show_description()
     else:
         hide_description()
-    wn.ontimer(poll_mouse, 100)
+    wn.ontimer(poll_mouse, 500)
 
 cookie.onclick(clicked)
 upgrade1.onclick(upgrade1_clicked)
-wn.onscreenclick(check_hover)
 poll_mouse()
 
 wn.mainloop()
